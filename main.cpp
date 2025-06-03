@@ -25,8 +25,8 @@ int main()
 
         catagories.timestamp = parts[0];
         catagories.side = parts[1];
-        catagories.quantity= parts[2];
-        catagories.price = parts[3];
+        catagories.quantity = std::stod(parts[2]);
+        catagories.price = std::stod(parts[3]);
 
     std::cout << "Timestamp: " << catagories.timestamp << "\n"
               << "Side:      " << catagories.side      << "\n"
