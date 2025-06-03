@@ -2,13 +2,28 @@
 #include <fstream>
 #include <string>
 #include <cstdint>
+#include <vector>
+#include <sstream>
 
-typedef struct {
-    uint16_t timestamp,
-    side,
-    quantity,
-    price;
-}TradeObjects_t;
+std::vector<std::string> split(const std::string& s, char delim)
+{
+    std::vector<std::string> elems;
+    std::istringstream iss(s);
+    std::string item;
+    while(std::getline(iss, item, delim))
+    {
+        elems.push_back(item);
+    }
 
-volatile TradeObjects_t tradeobjects = {0,0,0,0};
+    return elems;
+}
+
+struct TradeObjects_t{
+    std::string timestamp;
+    std::string side;
+    std::string quantity;
+    std::string price;
+};
+
+TradeObjects_t catagories = {"None", "None", "0.0","0.0"};
     
