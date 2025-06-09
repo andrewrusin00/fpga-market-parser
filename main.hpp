@@ -7,6 +7,7 @@
 #include <vector>
 #include <sstream>
 #include <limits>
+#include <queue>
 
 struct TradeObjects_t{
     int id;
@@ -17,6 +18,7 @@ struct TradeObjects_t{
 };
 
 std::vector<std::string> split(const std::string& s, char delim);
+std::vector<TradeObjects_t> trades;
 
 
 
