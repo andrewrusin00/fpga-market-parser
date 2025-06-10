@@ -7,6 +7,7 @@
 #include <vector>
 #include <sstream>
 #include <limits>
+#include <deque>
 #include <queue>
 
 struct TradeObjects_t{
@@ -18,7 +19,6 @@ struct TradeObjects_t{
 };
 
 std::vector<std::string> split(const std::string& s, char delim);
-std::vector<TradeObjects_t> trades;
 
 
 

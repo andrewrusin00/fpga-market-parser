@@ -32,57 +32,95 @@ int main()
         std::cerr << "Failed to open file.\n";
         return 1;
     }
-
     std::vector<TradeObjects_t> trades;
+    constexpr int BUFFER_DELAY = 5;
+    std::deque<TradeObjects_t> tradeBuffer;
 
+    std::ofstream out("parsed_output.txt");
+    int id_counter = 1;
     while (std::getline(file, line))
     {
-        std::cout << "Read line: " <<  line << '\n';
         auto parts = split(line, delim);
-        if(parts.size() < 4) 
-        {
-            std::cerr << "Bad line: " << line << "\n";
-            continue;
-        }
+        if(parts.size() < 4) continue;
+    
         TradeObjects_t trade;
         trade.timestamp = parts[0];
         trade.side = parts[1];
         trade.quantity = std::stod(parts[2]);
         trade.price = std::stod(parts[3]);
+        trade.id = id_counter++;
 
-        static int currentID = 1;
-        trade.id = currentID++;
+        tradeBuffer.push_back(trade);
 
-        if (trade.side == "BUY")
+        // Simulate a trade buffer using queue/dequeue
+        if (tradeBuffer.size() >= BUFFER_DELAY)
         {
-            totalBuyQty += trade.quantity;
-            if (trade.price > bestBid)
+            TradeObjects_t delayedTrade = tradeBuffer.front();
+            tradeBuffer.pop_front();
+            
+
+            if (delayedTrade.side == "BUY")
             {
-                bestBid = trade.price;
+                totalBuyQty += delayedTrade.quantity;
+                if (delayedTrade.price > bestBid)
+                {
+                    bestBid = delayedTrade.price;
+                }
             }
-        }
-        else if (trade.side == "SELL")
-        {
-            totalSellQty += trade.quantity;
-            if(trade.price < bestAsk)
+            else if (delayedTrade.side == "SELL")
             {
-                bestAsk = trade.price;
+                totalSellQty += delayedTrade.quantity;
+                if (delayedTrade.price < bestAsk)
+                {
+                    bestAsk = delayedTrade.price;
+                }
             }
+            
+            trades.push_back(delayedTrade);
         }
 
-        trades.push_back(trade);
-    
-        std::ofstream out("parsed_output.txt");
-        for (const auto& trade : trades)
-        {
-            out << "Trade ID: " << trade.id << "\n"
-                << "Timestamp: " << trade.timestamp << "\n"
-                << "Side:      " << trade.side      << "\n"
-                << "Quantity:  " << trade.quantity  << "\n"
-                << "Price:     " << trade.price     << "\n";
-        }
+
+    // out << "Trade ID: " << trade.id << "\n"
+    //     << "Timestamp: " << trade.timestamp << "\n"
+    //     << "Side:      " << trade.side      << "\n"
+    //     << "Quantity:  " << trade.quantity  << "\n"
+    //     << "Price:     " << trade.price     << "\n";
+
 
     }
+    // Flush the remaining trades in the buffer
+    while (!tradeBuffer.empty())
+    {
+        TradeObjects_t delayedTrade = tradeBuffer.front();
+        tradeBuffer.pop_front();
+
+        if (delayedTrade.side == "BUY")
+        {
+            totalBuyQty += delayedTrade.quantity;
+            if (delayedTrade.price > bestBid)
+            {
+                bestBid = delayedTrade.price;
+            }
+        }
+        else if (delayedTrade.side == "SELL")
+        {
+            totalSellQty += delayedTrade.quantity;
+            if (delayedTrade.price < bestAsk)
+            {
+                bestAsk = delayedTrade.price;
+            }
+        }
+
+        trades.push_back(delayedTrade);
+
+        out << "Trade ID: " << delayedTrade.id << "\n"
+            << "Timestamp: " << delayedTrade.timestamp << "\n"
+            << "Side:      " << delayedTrade.side      << "\n"
+            << "Quantity:  " << delayedTrade.quantity  << "\n"
+            << "Price:     " << delayedTrade.price     << "\n\n";        
+    }
+
+    out.close();
 
     std::cout << "Total BUY Quantity: " << totalBuyQty << "\n";
     std::cout << "Total SELL Quantity: " << totalSellQty << "\n";
