@@ -1,21 +1,192 @@
+Trade ID: 1
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 2
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 3
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 4
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 5
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 6
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 7
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 8
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 9
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 10
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 11
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 12
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 13
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 14
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 15
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 16
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 17
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 18
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 19
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 20
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 21
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 22
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 23
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 24
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 25
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 26
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 27
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 28
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 29
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 30
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 31
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 32
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+FLUSHED TRADES
+Trade ID: 33
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+
+FLUSHED TRADES
 Trade ID: 34
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 
+FLUSHED TRADES
 Trade ID: 35
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 
+FLUSHED TRADES
 Trade ID: 36
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100
 Price:     132.45
 
+FLUSHED TRADES
 Trade ID: 37
 Timestamp: 09:30:00.002
 Side:      SELL
