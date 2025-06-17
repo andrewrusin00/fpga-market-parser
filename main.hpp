@@ -9,6 +9,9 @@
 #include <limits>
 #include <deque>
 #include <queue>
+#include <chrono>
+#include <thread>
+#include <mutex>
 
 struct TradeObjects_t{
     int id;
@@ -16,6 +19,7 @@ struct TradeObjects_t{
     std::string side;
     double quantity;
     double price;
+    std::chrono::high_resolution_clock::time_point arrivalTime;
 };
 
 std::vector<std::string> split(const std::string& s, char delim);

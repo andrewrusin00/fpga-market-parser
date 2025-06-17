@@ -1,159 +1,191 @@
 Trade ID: 1
+Latency: 601378
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100
 Price:     132.45
 Trade ID: 2
+Latency: 601458
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 3
+Latency: 601392
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 Trade ID: 4
+Latency: 601370
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100
 Price:     132.45
 Trade ID: 5
+Latency: 601476
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 6
+Latency: 601585
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 Trade ID: 7
+Latency: 601402
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100
 Price:     132.45
 Trade ID: 8
+Latency: 601505
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 9
+Latency: 601463
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 Trade ID: 10
+Latency: 601391
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100
 Price:     132.45
 Trade ID: 11
+Latency: 601386
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 12
+Latency: 601344
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 Trade ID: 13
+Latency: 601455
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100
 Price:     132.45
 Trade ID: 14
+Latency: 601434
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 15
+Latency: 601459
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 Trade ID: 16
+Latency: 601480
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100
 Price:     132.45
 Trade ID: 17
+Latency: 601453
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 18
+Latency: 601482
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 Trade ID: 19
+Latency: 601432
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100
 Price:     132.45
 Trade ID: 20
+Latency: 601499
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 21
+Latency: 601568
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 Trade ID: 22
+Latency: 601605
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 23
+Latency: 601445
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 Trade ID: 24
+Latency: 601533
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100
 Price:     132.45
 Trade ID: 25
+Latency: 601585
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 26
+Latency: 601543
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 27
+Latency: 601511
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 Trade ID: 28
+Latency: 601429
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100
 Price:     132.45
 Trade ID: 29
+Latency: 601384
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 30
+Latency: 601307
 Timestamp: 09:30:00.002
 Side:      SELL
 Quantity:  50
 Price:     132.5
 Trade ID: 31
+Latency: 601274
 Timestamp: 09:30:00.003
 Side:      BUY
 Quantity:  200
 Price:     132.4
 Trade ID: 32
+Latency: 601272
 Timestamp: 09:30:00.001
 Side:      BUY
 Quantity:  100

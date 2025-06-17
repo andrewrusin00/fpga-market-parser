@@ -13,6 +13,12 @@ std::vector<std::string> split(const std::string& s, char delim)
     return elems;
 }
 
+// std::deque<TradeObjects_t> fifo;
+// std::mutex fifoMutex;
+// std::conditional fifoCondition;
+// constexpr int BUFFER_DEPTH = 5;
+
+
 int main()
 {
     char delim = ',';
@@ -50,14 +56,23 @@ int main()
         t.side = parts[1];
         t.quantity = std::stod(parts[2]);
         t.price = std::stod(parts[3]);
-        
+        // Stamp the arrival time of the trade
+        t.arrivalTime = std::chrono::high_resolution_clock::now();
+
         tradeBuffer.push_back(t);
+
+        // Simulate real time feed arrival
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         // Simulate a trade buffer using queue/dequeue
         if (tradeBuffer.size() > BUFFER_DELAY)
         {
             TradeObjects_t delayedTrade = tradeBuffer.front();
             tradeBuffer.pop_front();
+
+            // Measure and log latency
+            auto emit_time = std::chrono::high_resolution_clock::now();
+            auto latency_us = std::chrono::duration_cast<std::chrono::microseconds>(emit_time - delayedTrade.arrivalTime).count();
             
 
             if (delayedTrade.side == "BUY")
@@ -79,6 +94,7 @@ int main()
             
             trades.push_back(delayedTrade);
             out << "Trade ID: " << delayedTrade.id << "\n"
+                << "Latency: " << latency_us << "\n"
                 << "Timestamp: " << delayedTrade.timestamp << "\n"
                 << "Side:      " << delayedTrade.side      << "\n"
                 << "Quantity:  " << delayedTrade.quantity  << "\n"
