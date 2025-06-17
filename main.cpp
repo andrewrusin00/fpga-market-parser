@@ -13,27 +13,14 @@ std::vector<std::string> split(const std::string& s, char delim)
     return elems;
 }
 
-// std::deque<TradeObjects_t> fifo;
-// std::mutex fifoMutex;
-// std::conditional fifoCondition;
-// constexpr int BUFFER_DEPTH = 5;
 
+std::deque<TradeObjects_t> fifo;
+std::mutex fifoMutex;
+std::condition_variable fifoCondition;
+constexpr int BUFFER_DELAY = 5;
 
-int main()
+void producer()
 {
-    char delim = ',';
-    std::ifstream file("data/sample_feed.txt");
-    std::string line;
-
-    if(!file)
-    {
-        std::cerr << "Failed to open file.\n";
-        return 1;
-    }
-
-    constexpr int BUFFER_DELAY = 5;
-    std::vector<TradeObjects_t> trades;
-    std::deque<TradeObjects_t> tradeBuffer;
 
     // Put these into classes later
     double totalBuyQty = 0.0;
@@ -42,8 +29,13 @@ int main()
     double bestBid = 0.0;
     double bestAsk = std::numeric_limits<double>::max();
 
-    std::ofstream out("parsed_output.txt");
     int id_counter = 1;
+    std::deque<TradeObjects_t> tradeBuffer;
+    char delim = ',';
+    std::ifstream file("data/sample_feed.txt");
+    std::string line;
+
+    if(!file) return;
 
     while (std::getline(file, line))
     {
@@ -61,85 +53,80 @@ int main()
 
         tradeBuffer.push_back(t);
 
-        // Simulate real time feed arrival
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
         // Simulate a trade buffer using queue/dequeue
         if (tradeBuffer.size() > BUFFER_DELAY)
         {
-            TradeObjects_t delayedTrade = tradeBuffer.front();
+            auto delayedTrade = tradeBuffer.front();
             tradeBuffer.pop_front();
 
             // Measure and log latency
-            auto emit_time = std::chrono::high_resolution_clock::now();
-            auto latency_us = std::chrono::duration_cast<std::chrono::microseconds>(emit_time - delayedTrade.arrivalTime).count();
+            delayedTrade.latency_us = std::chrono::duration_cast<
+                                        std::chrono::microseconds>(
+                                            std::chrono::high_resolution_clock::now() 
+                                            - delayedTrade.arrivalTime
+                                        ).count();
             
-
-            if (delayedTrade.side == "BUY")
             {
-                totalBuyQty += delayedTrade.quantity;
-                if (delayedTrade.price > bestBid)
-                {
-                    bestBid = delayedTrade.price;
-                }
+                std::lock_guard<std::mutex> lock(fifoMutex);
+                fifo.push_back(delayedTrade);
             }
-            else if (delayedTrade.side == "SELL")
-            {
-                totalSellQty += delayedTrade.quantity;
-                if (delayedTrade.price < bestAsk)
-                {
-                    bestAsk = delayedTrade.price;
-                }
-            }
-            
-            trades.push_back(delayedTrade);
-            out << "Trade ID: " << delayedTrade.id << "\n"
-                << "Latency: " << latency_us << "\n"
-                << "Timestamp: " << delayedTrade.timestamp << "\n"
-                << "Side:      " << delayedTrade.side      << "\n"
-                << "Quantity:  " << delayedTrade.quantity  << "\n"
-                << "Price:     " << delayedTrade.price     << "\n";
+            fifoCondition.notify_one();
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));         
     }
-    // Flush the remaining trades in the buffer
-    while (!tradeBuffer.empty())
+
+    while (!tradeBuffer.empty()) 
     {
-        TradeObjects_t delayedTrade = tradeBuffer.front();
-        tradeBuffer.pop_front();
-
-        if (delayedTrade.side == "BUY")
+    auto dt = tradeBuffer.front();
+    tradeBuffer.pop_front();
+    dt.latency_us = 0; 
         {
-            totalBuyQty += delayedTrade.quantity;
-            if (delayedTrade.price > bestBid)
-            {
-                bestBid = delayedTrade.price;
-            }
+            std::lock_guard<std::mutex> lock(fifoMutex);
+            fifo.push_back(dt);
         }
-        else if (delayedTrade.side == "SELL")
-        {
-            totalSellQty += delayedTrade.quantity;
-            if (delayedTrade.price < bestAsk)
-            {
-                bestAsk = delayedTrade.price;
-            }
-        }
+        fifoCondition.notify_one();
+    }    
 
-        trades.push_back(delayedTrade);
-
-        out << "FLUSHED TRADES\n"
-            << "Trade ID: " << delayedTrade.id << "\n"
-            << "Timestamp: " << delayedTrade.timestamp << "\n"
-            << "Side:      " << delayedTrade.side      << "\n"
-            << "Quantity:  " << delayedTrade.quantity  << "\n"
-            << "Price:     " << delayedTrade.price     << "\n\n";        
+    {
+        TradeObjects_t sentinel{};
+        sentinel.id = 0;
+        std::lock_guard<std::mutex> lock(fifoMutex);
+        fifo.push_back(sentinel);
     }
 
-    out.close();
+    fifoCondition.notify_one();
+}
 
-    std::cout << "Total BUY Quantity: " << totalBuyQty << "\n";
-    std::cout << "Total SELL Quantity: " << totalSellQty << "\n";
-    std::cout << "Best BID: " << bestBid << "\n";
-    std::cout << "Best ASK: " << bestAsk << "\n";
+void consumer()
+{
+    std::ofstream out("parsed_output.txt");
 
+    while(true)
+    {
+        std::unique_lock<std::mutex> lock(fifoMutex);
+        fifoCondition.wait(lock, []{return !fifo.empty();});
+        auto t = fifo.front();
+        fifo.pop_front();
+        lock.unlock();
+
+        if (t.id == 0) break;
+
+        out << "Trade ID: " << t.id << "\n"
+            << "Latency: " << t.latency_us << "\n"
+            << "Timestamp: " << t.timestamp << "\n"
+            << "Side:      " << t.side      << "\n"
+            << "Quantity:  " << t.quantity  << "\n"
+            << "Price:     " << t.price     << "\n";
+    }
+}
+
+
+int main()
+{
+    
+    std::thread prod(producer);
+    std::thread cons(consumer);
+    prod.join();
+    cons.join();
     return 0;
 }
