@@ -13,6 +13,8 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <algorithm>
+#include <numeric>
 
 struct TradeObjects_t{
     int id;

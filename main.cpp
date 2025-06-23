@@ -19,6 +19,8 @@ std::mutex fifoMutex;
 std::condition_variable fifoCondition;
 constexpr int BUFFER_DELAY = 5;
 
+// The producer takes in the data and parses through and storing
+// it for the consumer to use. Also simulates a buffer
 void producer()
 {
 
@@ -79,7 +81,11 @@ void producer()
     {
     auto dt = tradeBuffer.front();
     tradeBuffer.pop_front();
-    dt.latency_us = 0; 
+    dt.latency_us = std::chrono::duration_cast<
+                                std::chrono::microseconds>(
+                                std::chrono::high_resolution_clock::now() 
+                                - dt.arrivalTime
+                                ).count(); 
         {
             std::lock_guard<std::mutex> lock(fifoMutex);
             fifo.push_back(dt);
@@ -97,9 +103,12 @@ void producer()
     fifoCondition.notify_one();
 }
 
+// Consumer function which takes in the parsing and writes to an output
+// ready for a trading algorithm to use
 void consumer()
 {
     std::ofstream out("parsed_output.txt");
+    std::vector<long long> latencies;
 
     while(true)
     {
@@ -111,6 +120,8 @@ void consumer()
 
         if (t.id == 0) break;
 
+        latencies.push_back(t.latency_us);
+
         out << "Trade ID: " << t.id << "\n"
             << "Latency: " << t.latency_us << "\n"
             << "Timestamp: " << t.timestamp << "\n"
@@ -118,12 +129,24 @@ void consumer()
             << "Quantity:  " << t.quantity  << "\n"
             << "Price:     " << t.price     << "\n";
     }
+
+    auto [minIt, maxIt] = std::minmax_element(latencies.begin(), latencies.end());
+    long long sum = std::accumulate(latencies.begin(), latencies.end(), 0LL);
+    double avg = static_cast<double>(sum) / latencies.size();
+
+    double totalTime_sec = sum / 1'000'000.0;
+    double throughput = latencies.size() / totalTime_sec;
+
+    out
+        << "\nMin Latency: " << *minIt  << " µs\n"
+        << "Max Latency: " << *maxIt  << " µs\n"
+        << "Avg Latency: " << avg     << " µs\n"
+        << "Throughput:  " << throughput << " trades/sec\n";
 }
 
 
 int main()
 {
-    
     std::thread prod(producer);
     std::thread cons(consumer);
     prod.join();
