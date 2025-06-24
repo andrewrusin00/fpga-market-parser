@@ -1,0 +1,227 @@
+Trade ID: 1
+Latency: 500896
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 2
+Latency: 500912
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 3
+Latency: 500951
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 4
+Latency: 501004
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 5
+Latency: 500990
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 6
+Latency: 501009
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 7
+Latency: 501049
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 8
+Latency: 501038
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 9
+Latency: 501108
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 10
+Latency: 501097
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 11
+Latency: 501036
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 12
+Latency: 501030
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 13
+Latency: 501040
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 14
+Latency: 500945
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 15
+Latency: 500859
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 16
+Latency: 500917
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 17
+Latency: 500896
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 18
+Latency: 500903
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 19
+Latency: 501015
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 20
+Latency: 501074
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 21
+Latency: 501036
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 22
+Latency: 500949
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 23
+Latency: 500976
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 24
+Latency: 501010
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 25
+Latency: 500966
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 26
+Latency: 501021
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 27
+Latency: 501125
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 28
+Latency: 501027
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 29
+Latency: 501006
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 30
+Latency: 501129
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 31
+Latency: 501151
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 32
+Latency: 501061
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 33
+Latency: 501014
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 34
+Latency: 400812
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+Trade ID: 35
+Latency: 300557
+Timestamp: 09:30:00.003
+Side:      BUY
+Quantity:  200
+Price:     132.4
+Trade ID: 36
+Latency: 200310
+Timestamp: 09:30:00.001
+Side:      BUY
+Quantity:  100
+Price:     132.45
+Trade ID: 37
+Latency: 100153
+Timestamp: 09:30:00.002
+Side:      SELL
+Quantity:  50
+Price:     132.5
+
+Min Latency: 100153 µs
+Max Latency: 501151 µs
+Avg Latency: 473921 µs
+Throughput:  2.11006 trades/sec
