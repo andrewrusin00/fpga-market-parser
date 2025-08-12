@@ -1,3 +1,4 @@
 Time resolution is 1 ps
-Got trade: id=100 side=1 vol=50 price=132.450000
-$finish called at time : 145 ns : File "C:/Users/andre/sharedhome/projects/fpga-market-parser/realParser/realParser.srcs/sim_1/new/tb_parser.sv" Line 63
+[115000] LAST observed after 3 beats
+PASS: 3 beats transferred in order.
+$finish called at time : 605 ns : File "C:/Users/andre/Downloads/tb_axis_regslice.sv" Line 110
