@@ -1,4 +1,0 @@
-Time resolution is 1 ps
-[115000] LAST observed after 3 beats
-PASS: 3 beats transferred in order.
-$finish called at time : 605 ns : File "C:/Users/andre/Downloads/tb_axis_regslice.sv" Line 110

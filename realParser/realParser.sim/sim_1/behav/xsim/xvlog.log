@@ -1,5 +1,0 @@
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/andre/Downloads/axis_regslice.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module axis_regslice
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/andre/Downloads/tb_axis_regslice.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module tb_axis_regslice
-WARNING: [VRFC 10-3824] variable 'exp' must explicitly be declared as automatic or static [C:/Users/andre/Downloads/tb_axis_regslice.sv:91]

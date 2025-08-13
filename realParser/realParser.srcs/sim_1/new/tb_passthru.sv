@@ -1,0 +1,127 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 08/12/2025 04:21:55 PM
+// Design Name: 
+// Module Name: tb_passthru
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+module tb_passthru;
+
+localparam int W = 8; // stream data width
+
+// Match passthru.sv (signal declarations)
+logic  clk;
+logic rst_n;
+
+logic [W-1:0]   s_tdata;
+logic           s_tvalid;
+logic           s_tready; // will be driven BY the DUT 
+logic           s_tlast;
+
+logic [W-1:0]   mid_tdata;
+logic           mid_tvalid;
+logic           mid_tready;
+logic           mid_tlast;
+
+logic [W-1:0]   m_tdata;
+logic           m_tvalid; // driven by DUT
+logic           m_tready;
+logic           m_tlast;
+
+wire xfer_in = s_tvalid && s_tready;
+wire xfer_out = m_tvalid && m_tready;
+
+// DUT - device under test
+passthru #(.W(W)) u_passthru (
+    .clk(clk),
+    .rst_n(rst_n),
+
+    // from tb
+    .s_tdata(s_tdata),
+    .s_tvalid(s_tvalid),
+    .s_tready(s_tready),
+    .s_tlast(s_tlast),
+    
+    // to framer
+    .m_tdata(mid_tdata),
+    .m_tvalid(mid_tvalid),
+    .m_tready(mid_tready),
+    .m_tlast(mid_tlast)
+);  
+
+market_framer #(.W(W), .FRAME_N(12)) u_framer (
+    .clk(clk),
+    .rst_n(rst_n),
+
+    // from passthru
+    .s_tdata(mid_tdata),
+    .s_tvalid(mid_tvalid),
+    .s_tready(mid_tready),
+    .s_tlast(mid_tlast),
+
+    // to tb sink
+    .m_tdata(m_tdata),
+    .m_tvalid(m_tvalid),
+    .m_tready(m_tready),
+    .m_tlast(m_tlast)
+);    
+// 100Mhz clock: period = 10ns -> toggle every 5ns
+initial clk = 1'b0;
+always #5 clk = ~clk;
+
+initial begin
+    // default values at time 0
+    rst_n       = 1'b0;
+    m_tready    = 1'b0;
+    s_tdata     = '0;
+    s_tvalid    = 1'b0;
+    s_tlast     = 1'b0;
+    
+    // wait for two rising edges
+    repeat (2) @(posedge clk);
+    
+    // dessert reset (now the DUT when added will be "running"
+    rst_n       = 1'b1;
+    m_tready    = 1'b1;
+    
+    repeat (10) @(posedge clk);
+end
+
+// Expect m_tlast = 1 on third transfer
+// One TRADE message:
+// type=0x01, instrument_id=0x001234, price=0x00002710 (decimal 10000), size=0x00000064 (100)
+initial begin : stimulus_one_msg
+    @(posedge rst_n);
+
+    @(posedge clk); s_tdata <= 8'h01; s_tvalid <= 1'b1; // msg_type
+    @(posedge clk); s_tdata <= 8'h00;                   // instrument_id [23:16]
+    @(posedge clk); s_tdata <= 8'h12;                   // instrument_id [15:8]
+    @(posedge clk); s_tdata <= 8'h34;                   // instrument_id [7:0]
+    @(posedge clk); s_tdata <= 8'h00;                   // price [31:24]
+    @(posedge clk); s_tdata <= 8'h00;                   // price [23:16]
+    @(posedge clk); s_tdata <= 8'h27;                   // price [15:8]
+    @(posedge clk); s_tdata <= 8'h10;                   // price [7:0]
+    @(posedge clk); s_tdata <= 8'h00;                   // size [31:24]
+    @(posedge clk); s_tdata <= 8'h00;                   // size [23:16]
+    @(posedge clk); s_tdata <= 8'h00;                   // size [15:8]
+    @(posedge clk); s_tdata <= 8'h64;                   // size [7:0]  <-- expect TLAST on this transfer
+
+    @(posedge clk); s_tvalid <= 1'b0;                   // stop driving
+    repeat (3) @(posedge clk);
+    $finish;
+end
+
+endmodule

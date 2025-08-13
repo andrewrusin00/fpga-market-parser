@@ -1,4 +1,3 @@
-`timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -18,38 +17,41 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
+`timescale 1ns/1ps
 
 module passthru #(parameter int W = 8) (
     input logic clk,
     input logic rst_n,
     
-    // input stream(from previous stage
+    // INPUT stream (from previous stage)
     input logic [W-1:0] s_tdata,
     input logic         s_tvalid,
     output logic        s_tready,
     input logic         s_tlast,
     
-    // output stream (to next stage)
-    output logic [W-1:0]    m_tdata,
-    output logic            m_tvalid,
-    input logic             m_tready,
-    output logic            m_tlast
+    //OUTPUT stream (to next stage)
+    output logic [W-1:0]m_tdata,
+    output logic        m_tvalid,
+    input logic         m_tready,
+    output logic        m_tlast
 );
+ 
+assign s_tready = m_tready;
+assign m_tvalid = s_tvalid;
+assign m_tdata = s_tdata;
 
-    // combinational pass-through
-    assign m_tdata = s_tdata;
-    assign m_tvalid = s_tvalid;
-    assign s_tready = m_tready;
-    
-    logix [1:0] cnt;
-    wire xfer = m_tvalid && m_tready;
-    
-    always_ff @(posedge clk or negedge rst_n) begin
-        if(!rst_n)      cnt <= 2'd0;
-        else if (xfer)  cnt <= (cnt == 2'd2) ? 2'd0 : cnt +2'd1;
+wire xfer = s_tvalid && s_tready;
+
+logic [1:0] beat_cnt;
+
+always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n)                 beat_cnt <= 2'd0;
+    else if (xfer) begin
+        if (beat_cnt == 2'd2)   beat_cnt <= 2'd0;
+        else                    beat_cnt <= beat_cnt + 2'd1;
     end
-    
-assign m_tlast = (cnt == 2'd2) && m_tvalid;
-        
+end
+
+assign m_tlast = (beat_cnt == 2'd2) && s_tvalid;
+       
 endmodule

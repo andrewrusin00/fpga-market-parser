@@ -1,0 +1,15 @@
+# Vivado build artifacts
+/realParser/realParser.cache/
+/realParser/realParser.hw/
+/realParser/realParser.ip_user_files/
+/realParser/realParser.runs/
+/realParser/realParser.sim/
+/realParser/.Xil/
+
+# Common Vivado outputs
+**/*.dcp
+**/*.wdb
+**/*.jou
+**/*.log
+**/*.rpx
+**/*.pb
