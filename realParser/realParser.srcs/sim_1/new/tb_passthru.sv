@@ -47,6 +47,13 @@ logic           m_tvalid; // driven by DUT
 logic           m_tready;
 logic           m_tlast;
 
+// tb only wires to print parsed result when p_valid pulse
+logic           p_valid;
+logic [7:0]     p_type;
+logic [23:0]    p_id;
+logic [31:0]    p_price;
+logic [31:0]    p_size;
+
 wire xfer_in = s_tvalid && s_tready;
 wire xfer_out = m_tvalid && m_tready;
 
@@ -106,11 +113,11 @@ market_parser #(.W(W)) u_parser (
     .m_tlast(m_tlast),
 
     // parsed fields
-    .p_valid(),
-    .p_msg_type(),
-    .p_instr_id(),
-    .p_price(),
-    .p_size()
+    .p_valid(p_valid),
+    .p_msg_type(p_type),
+    .p_instr_id(p_id),
+    .p_price(p_price),
+    .p_size(p_size)
 );    
 // 100Mhz clock: period = 10ns -> toggle every 5ns
 initial clk = 1'b0;
@@ -134,6 +141,20 @@ initial begin
     repeat (10) @(posedge clk);
 end
 
+always_ff @(posedge clk) if (rst_n && p_valid) begin
+    $display("PARSED TRADE type=0x%02h id=0x%06h price=%0d size=%0d",
+    p_type, p_id, p_price, p_size);
+
+    if ((p_type  == 8'h01) &&
+        (p_id    == 24'h001234) &&
+        (p_price == 32'h00002710) &&
+        (p_size  == 32'd100))
+        
+        $display("PASS: Parsed trade matches expected");
+    else
+        $error("Mismatch! type=0x%02h id=0x%06h price=%0d size=%0d",
+        p_type, p_id, p_price, p_size);
+end
 // Expect m_tlast = 1 on third transfer
 // One TRADE message:
 // type=0x01, instrument_id=0x001234, price=0x00002710 (decimal 10000), size=0x00000064 (100)

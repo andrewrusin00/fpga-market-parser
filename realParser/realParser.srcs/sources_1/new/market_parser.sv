@@ -41,7 +41,13 @@ module market_parser #(parameter int W = 8) (
     output logic [7:0]      p_msg_type,
     output logic [23:0]     p_instr_id,
     output logic [31:0]     p_price,
-    output logic [31:0]     p_size     
+    output logic [31:0]     p_size,     
+
+    // parsed field regs
+    logic [7:0]             r_type,
+    logic [23:0]            r_id,    // 3 bytes: big-endian (the first byte of a multi-byte field goes to the high bits)
+    logic [31:0]            r_price,
+    logic [31:0]            r_size           
 );
 
 // pass through, no parsing yet
@@ -63,16 +69,53 @@ always_ff @(posedge clk or negedge rst_n) begin
     end
 end
 
+// assemble fields on accepted bytes
+always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        r_type  <= '0;
+        r_id    <= '0;
+        r_price <= '0;
+        r_size  <= '0;
+    end else if (xfer) begin
+        unique case (byte_idx)
+            4'd0:  r_type            <= s_tdata;        // msg_type
+            // instrument_id (3 bytes, big-endian)
+            4'd1:  r_id[23:16]       <= s_tdata;        // first ID byte  → high bits
+            4'd2:  r_id[15:8]        <= s_tdata;        // middle ID byte
+            4'd3:  r_id[7:0]         <= s_tdata;        // last  ID byte  → low bits
+            // price (4 bytes, big-endian)
+            4'd4:  r_price[31:24]    <= s_tdata;        // first price byte → high 8
+            4'd5:  r_price[23:16]    <= s_tdata;
+            4'd6:  r_price[15:8]     <= s_tdata;
+            4'd7:  r_price[7:0]      <= s_tdata;        // last price byte  → low 8
+            // size (4 bytes, big-endian)
+            4'd8:  r_size[31:24]     <= s_tdata;
+            4'd9:  r_size[23:16]     <= s_tdata;
+            4'd10: r_size[15:8]      <= s_tdata;
+            4'd11: r_size[7:0]       <= s_tdata;
+            default: ; // no-op  
+        endcase
+    end
+end
+
 // place holder outputs (to be replaced with real logic)
 always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
-        p_valid     <= 1'b0;
-        p_msg_type  <= '0;
-        p_instr_id  <= '0;
-        p_price     <= '0;
-        p_size      <= '0;
+        p_valid    <= 1'b0;
+        p_msg_type <= '0;
+        p_instr_id <= '0;
+        p_price    <= '0;
+        p_size     <= '0;
     end else begin
-        p_valid     <= 1'b0;    // keep low until parsing is implemented
+        // continuously expose latest assembled values
+        p_msg_type <= r_type;
+        p_instr_id <= r_id;
+        p_price    <= r_price;
+        p_size     <= r_size;
+
+        // one-cycle "record ready" pulse exactly when the last byte is accepted
+        // (xfer ensures we only pulse when valid && ready; s_tlast marks it's the last beat)
+        p_valid <= xfer && s_tlast;
     end
 end
 
