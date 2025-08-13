@@ -50,6 +50,19 @@ assign m_tvalid = s_tvalid;
 assign m_tdata = s_tdata;
 assign m_tlast = s_tlast;
 
+wire xfer = s_tvalid && s_tready;
+
+logic [3:0] byte_idx;
+
+always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        byte_idx <= 4'd0;
+    end else if (xfer) begin
+        if (s_tlast)    byte_idx <= 4'd0;
+        else            byte_idx <= byte_idx + 4'd1;
+    end
+end
+
 // place holder outputs (to be replaced with real logic)
 always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin

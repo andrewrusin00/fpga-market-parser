@@ -36,6 +36,12 @@ logic           mid_tvalid;
 logic           mid_tready;
 logic           mid_tlast;
 
+// stream between framer and parser
+logic [W-1:0]   par_tdata;
+logic           par_tvalid;
+logic           par_tready;
+logic           par_tlast;
+
 logic [W-1:0]   m_tdata;
 logic           m_tvalid; // driven by DUT
 logic           m_tready;
@@ -45,6 +51,8 @@ wire xfer_in = s_tvalid && s_tready;
 wire xfer_out = m_tvalid && m_tready;
 
 // DUT - device under test
+
+// upstream: tb -> passthru -> mid_*
 passthru #(.W(W)) u_passthru (
     .clk(clk),
     .rst_n(rst_n),
@@ -62,6 +70,7 @@ passthru #(.W(W)) u_passthru (
     .m_tlast(mid_tlast)
 );  
 
+// middle: mid_* -> framer -> par_*
 market_framer #(.W(W), .FRAME_N(12)) u_framer (
     .clk(clk),
     .rst_n(rst_n),
@@ -73,10 +82,35 @@ market_framer #(.W(W), .FRAME_N(12)) u_framer (
     .s_tlast(mid_tlast),
 
     // to tb sink
+    .m_tdata(par_tdata),
+    .m_tvalid(par_tvalid),
+    .m_tready(par_tready),
+    .m_tlast(par_tlast)
+);    
+
+// downstream: par_* -> parser -> tb sink (m_*)
+market_parser #(.W(W)) u_parser (
+    .clk(clk),
+    .rst_n(rst_n),
+
+    // from passthru
+    .s_tdata(par_tdata),
+    .s_tvalid(par_tvalid),
+    .s_tready(par_tready),
+    .s_tlast(par_tlast),
+
+    // to tb sink
     .m_tdata(m_tdata),
     .m_tvalid(m_tvalid),
     .m_tready(m_tready),
-    .m_tlast(m_tlast)
+    .m_tlast(m_tlast),
+
+    // parsed fields
+    .p_valid(),
+    .p_msg_type(),
+    .p_instr_id(),
+    .p_price(),
+    .p_size()
 );    
 // 100Mhz clock: period = 10ns -> toggle every 5ns
 initial clk = 1'b0;
