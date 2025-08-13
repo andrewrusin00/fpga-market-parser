@@ -98,24 +98,28 @@ always_ff @(posedge clk or negedge rst_n) begin
     end
 end
 
-// place holder outputs (to be replaced with real logic)
+logic emit;
+
 always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
-        p_valid    <= 1'b0;
-        p_msg_type <= '0;
-        p_instr_id <= '0;
-        p_price    <= '0;
-        p_size     <= '0;
+        emit        <= 1'b0;
+        p_valid     <= 1'b0;
+        p_msg_type  <= '0;
+        p_instr_id  <= '0;
+        p_price     <= '0;
+        p_size      <= '0;
     end else begin
-        // continuously expose latest assembled values
-        p_msg_type <= r_type;
-        p_instr_id <= r_id;
-        p_price    <= r_price;
-        p_size     <= r_size;
 
-        // one-cycle "record ready" pulse exactly when the last byte is accepted
-        // (xfer ensures we only pulse when valid && ready; s_tlast marks it's the last beat)
-        p_valid <= xfer && s_tlast;
+        emit        <= (xfer && s_tlast);
+        p_valid     <= emit;
+        
+        if (emit) begin
+        // continuously expose latest assembled values
+            p_msg_type  <= r_type;
+            p_instr_id  <= r_id;
+            p_price     <= r_price;
+            p_size      <= r_size;
+        end
     end
 end
 
