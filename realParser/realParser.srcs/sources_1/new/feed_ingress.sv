@@ -131,7 +131,7 @@ always_ff @(posedge clk or negedge rst_n) begin
                             // start forwarding payload next
                             remain    <= new_len;
                             state     <= PAYLOAD;
-                            hdr_idx   <= 1'd0;
+                            hdr_idx   <= 2'd0;
                             last_seq  <= hdr_seq;
                             have_last <= 1'b1;
                         end

@@ -57,8 +57,18 @@ logic [31:0]    p_size;
 logic [15:0]    seq;
 logic           gap, len_err;
 
+logic [15:0]    last_seq_seen;
+logic           have_seq;
+integer         lat_cnt;
+
 wire xfer_in = s_tvalid && s_tready;
 wire xfer_out = m_tvalid && m_tready;
+
+// payload handshakes at parser input
+wire pay_xfer = par_tvalid && par_tready;
+
+typedef enum logic [1:0] {IDLE, WAIT_PAY, COUNT} lat_state_e;
+lat_state_e lat_state;
 
 // DUT - device under test
 // tb -> ingress
@@ -167,7 +177,7 @@ always @(posedge clk) if (rst_n && gap)
 
 always @(posedge clk) if (rst_n && len_err)
   $error("[%0t] LENGTH ERROR! got payload length != 12", $time);
-  
+
 always_ff @(posedge clk) if (rst_n && p_valid) begin
     $display("PARSED TRADE type=0x%02h id=0x%06h price=%0d size=%0d",
     p_type, p_id, p_price, p_size);
@@ -183,6 +193,41 @@ always_ff @(posedge clk) if (rst_n && p_valid) begin
         p_type, p_id, p_price, p_size);
 end
 
+always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        lat_state       <= IDLE;
+        last_seq_seen   <= '0;
+        have_seq        <= 1'b0;
+        lat_cnt         <= 0;
+    end else begin
+        case (lat_state)
+            IDLE: begin
+                // o_seq changes
+                if (!have_seq || (seq != last_seq_seen)) begin
+                    last_seq_seen   <= seq;
+                    have_seq        <= 1'b1;
+                    lat_state       <= WAIT_PAY;
+                end
+            end
+
+            WAIT_PAY: begin
+                if (pay_xfer) begin
+                    lat_cnt     <= 0;
+                    lat_state   <= COUNT;
+                end
+            end
+
+            COUNT: begin
+                if (!p_valid) lat_cnt <= lat_cnt + 1;
+                else begin
+                    // p_valid marks record ready, so report and go idle
+                    $display("LATENCY: seq=%0d    cycles=%0d (first payload -> p_valid)", last_seq_seen, lat_cnt);
+                    lat_state <= IDLE;
+                end
+            end
+        endcase
+    end
+end
 // send message gien seq and the 12B payload
 task automatic send_msg(input [15:0] seq16,
                         input byte  p0, input byte p1, input byte p2, input byte p3,
@@ -191,32 +236,38 @@ task automatic send_msg(input [15:0] seq16,
 
     begin
         // header: seq_hi, seq_lo, len_hi, len_lo (len = 12)
-        @(posedge clk); s_tdata <= seq16[15:8]; s_tvalid <= 1'b1;
-        @(posedge clk); s_tdata <= seq16[7:0];
-        @(posedge clk); s_tdata <= 8'd0;        // len_hi
-        @(posedge clk); s_tdata <= 8'd12;       // len_lo
+        push_byte(seq16[15:8]);
+        push_byte(seq16[7:0]);
+        push_byte(8'd0);
+        push_byte(8'd12);
 
-        // payload (12 bytes)
-        @(posedge clk); s_tdata <= p0;
-        @(posedge clk); s_tdata <= p1;
-        @(posedge clk); s_tdata <= p2;
-        @(posedge clk); s_tdata <= p3;
-        @(posedge clk); s_tdata <= p4;
-        @(posedge clk); s_tdata <= p5;
-        @(posedge clk); s_tdata <= p6;
-        @(posedge clk); s_tdata <= p7;
-        @(posedge clk); s_tdata <= p8;
-        @(posedge clk); s_tdata <= p9;
-        @(posedge clk); s_tdata <= pa;
-        @(posedge clk); s_tdata <= pb;
+        push_byte(p0);  push_byte(p1);  push_byte(p2);  push_byte(p3);
+        push_byte(p4);  push_byte(p5);  push_byte(p6);  push_byte(p7);
+        push_byte(p8);  push_byte(p9);  push_byte(pa);  push_byte(pb);
+
+        // optional: drop valid between messages
+        s_tvalid <= 1'b0;
     end
 endtask
+
+task automatic push_byte (input byte b);
+    begin
+        s_tdata     <= b;
+        s_tvalid    <= 1'b1;
+
+        do @(posedge clk); while (!s_tready);
+    end
+endtask
+
 
 initial begin : two_messages_with_gap
     @(posedge rst_n);
     m_tready <= 1'b1;
       // TRADE payload = (type=01, id=00 12 34, price=00 00 27 10, size=00 00 00 64)
     send_msg(16'd100, 8'h01, 8'h00,8'h12,8'h34, 8'h00,8'h00,8'h27,8'h10, 8'h00,8'h00,8'h00,8'h64);
+
+    @(posedge clk); m_tready <= 1'b0;
+    @(posedge clk); m_tready <= 1'b1;
 
     // deliberate gap: next seq is 102 (skips 101)
     send_msg(16'd102, 8'h01, 8'h00,8'h12,8'h34, 8'h00,8'h00,8'h27,8'h10,  8'h00,8'h00,8'h00,8'h64);
